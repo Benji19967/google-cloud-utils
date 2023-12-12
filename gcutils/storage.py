@@ -43,3 +43,13 @@ class GCStorageClient:
                 f"Could not find Blob with name: {blob_name} in bucket: {bucket.name}"
             )
         return blob
+
+    def blob_download_as_bytes(
+        self, blob: Blob, start: int | None, end: int | None
+    ) -> bytes:
+        return blob.download_as_bytes(start=start, end=end)
+
+    def blob_download_as_text(
+        self, blob: Blob, start: int | None, end: int | None
+    ) -> str:
+        return blob.download_as_text(start=start, end=end)
