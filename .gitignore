@@ -120,6 +120,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+env
+.poetry_venv
 .env
 .venv
 env/
