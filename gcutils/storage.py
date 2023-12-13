@@ -1,14 +1,15 @@
-from typing import Generator
+from typing import BinaryIO, Generator
 
-from google.cloud.storage import Blob, Bucket
-from google.cloud.storage.client import Client
+from google.cloud.storage import Blob, Bucket  # type: ignore
+from google.cloud.storage.client import Client  # type: ignore
 
 from gcutils.exceptions import BlobNotFound
 
 # TODO: Should I throw errors in JSON format so they are easier to analyze downstream?
 
+# TODO: How is the default retry in the google client?
 
-# TODO: Add retry
+
 class GCStorageClient:
     _BUCKETS: dict[str, Bucket] = {}
 
@@ -47,9 +48,16 @@ class GCStorageClient:
     def blob_download_as_bytes(
         self, blob: Blob, start: int | None, end: int | None
     ) -> bytes:
-        return blob.download_as_bytes(start=start, end=end)
+        b: bytes = blob.download_as_bytes(start=start, end=end)
+        return b
 
     def blob_download_as_text(
         self, blob: Blob, start: int | None, end: int | None
     ) -> str:
-        return blob.download_as_text(start=start, end=end)
+        text: str = blob.download_as_text(start=start, end=end)
+        return text
+
+    def blob_download_to_file(
+        self, file_obj: BinaryIO, blob: Blob, start: int | None, end: int | None
+    ) -> None:
+        blob.download_to_file(file_obj=file_obj, start=start, end=end)
