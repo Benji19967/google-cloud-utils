@@ -10,7 +10,7 @@ from gcutils.exceptions import BlobNotFound
 # TODO: How is the default retry in the google client?
 
 
-class GCStorageClient:
+class GSutils:
     _BUCKETS: dict[str, Bucket] = {}
 
     def __init__(self, client: Client) -> None:
