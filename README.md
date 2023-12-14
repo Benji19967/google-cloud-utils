@@ -17,3 +17,8 @@
     - buckets.delete
     - objects.delete
 
+## Service Account with keys
+
+- In the GCP console go to `IAM`
+- Create new service Account
+- Create new JSON key for service account
