@@ -11,12 +11,13 @@ from gcutils.exceptions import BlobNotFound
 
 
 class GSutils:
-    _BUCKETS: dict[str, Bucket] = {}
+    __CLIENTS: dict[str, Client] = {}
+    __BUCKETS: dict[str, Bucket] = {}
 
-    def __init__(self, client: Client) -> None:
-        self._client: Client = client
-        if not self._client.project:
-            raise ValueError("`project` needs to be set for Client")
+    def __init__(self, project_id: str) -> None:
+        if not project_id in self.__CLIENTS:
+            self.__CLIENTS[project_id] = Client(project=project_id)
+        self._client: Client = self.__CLIENTS[project_id]
 
     def list_buckets(self, prefix: str | None) -> Generator[Bucket, None, None]:
         for bucket in self._client.list_buckets(prefix=prefix):
@@ -25,8 +26,8 @@ class GSutils:
     def get_bucket(self, bucket_or_name: Bucket | str) -> Bucket:
         if isinstance(bucket_or_name, Bucket):
             return bucket_or_name
-        if bucket_or_name in self._BUCKETS:
-            return self._BUCKETS[bucket_or_name]
+        if bucket_or_name in self.__BUCKETS:
+            return self.__BUCKETS[bucket_or_name]
         return self._client.get_bucket(bucket_or_name=bucket_or_name)
 
     def list_blobs(

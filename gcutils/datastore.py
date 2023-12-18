@@ -1,15 +1,19 @@
-from typing import Any
+from typing import Any, Generator
 
 from google.cloud.datastore import Client, Entity, Key
 
 from gcutils.exceptions import EntityNotFound
 
+# TODO: Maybe create own Entity, where id is always set.
+
 
 class DSutils:
-    def __init__(self, client: Client) -> None:
-        self._client: Client = client
-        if not self._client.project:
-            raise ValueError("`project` needs to be set for Client")
+    __CLIENTS: dict[str, Client] = {}
+
+    def __init__(self, project_id: str) -> None:
+        if not project_id in self.__CLIENTS:
+            self.__CLIENTS[project_id] = Client(project=project_id)
+        self._client: Client = self.__CLIENTS[project_id]
 
     def get_entity(self, kind: str, id: int | str) -> Entity:
         key = self._client.key(kind, id)  # type: ignore
@@ -28,6 +32,12 @@ class DSutils:
             raise ValueError("Missing list must initially be empty")
         entites: list[Entity] = self._client.get_multi(keys=keys, missing=missing)  # type:ignore
         return entites
+
+    def get_entities_by_kind(
+        self, kind: str, limit: int | None = None
+    ) -> Generator[Entity, None, None]:
+        query = self._client.query(kind=kind)
+        yield from query.fetch(limit=limit)
 
     def put(self, entity: Entity) -> None:
         self._client.put(entity=entity)  # type: ignore
@@ -49,3 +59,7 @@ class DSutils:
             incomplete_key=incomplete_key, num_ids=num_keys
         )  # type: ignore
         return complete_keys
+
+    def query(self, **kwargs) -> Generator[Entity, None, None]:
+        query = self._client.query(**kwargs)
+        yield from query.fetch()
