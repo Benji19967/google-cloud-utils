@@ -1,4 +1,14 @@
-# Google Cloud
+# Google Cloud Utils
+
+## Pypi publishing
+
+https://www.digitalocean.com/community/tutorials/how-to-publish-python-packages-to-pypi-using-poetry-on-ubuntu-22-04
+
+- Add token to `poetry`
+- `poetry build`
+- `poetry publish`
+
+Note: package name has to be unique
 
 ## Pricing
 
